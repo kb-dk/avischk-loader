@@ -1,10 +1,10 @@
 #!/usr/bin/env python2.7
 
 import ConfigParser
-import glob
 import os
 import psycopg2
 import datetime
+import re
 
 
 config = ConfigParser.RawConfigParser()
@@ -19,23 +19,20 @@ newspaperName = config.get("loader-config", "newspaper-name")
 newspaperPath = config.get("loader-config", "newspaper-path")
 filePatterns = config.items("file-patterns")
 
-def storeFjerritslevPdfValues(pattern):
-  now = datetime.datetime.now()
-  deliveryDate=now.strftime("%Y-%m-%d")
-  for path in glob.glob(newspaperPath + pattern):
-    paper,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
-    page,fileFormat = pageAndFormat.split(".")
-    pageNumber = page.replace("-","")
-    year = date[0:4]
-    month = date[4:6]
-    day = date[6:8]
-    date = year + "-" + month + "-" + day
-    newspaperId = newspaperName.replace(" ", "_")
-    shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-    storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
+def storeFjerritslevPdfValues(path, deliveryDate):
+  paper,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
+  page,fileFormat = pageAndFormat.split(".")
+  pageNumber = page.replace("-","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = newspaperName.replace(" ", "_")
+  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
 
 def createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day):
-  return newspaperId+"/"+fileFormat+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
+  return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
 
 
 def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, shadow_path, section_title, edition_title, delivery_date):
@@ -55,9 +52,21 @@ def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number,
       conn.close()
 
 
+now = datetime.datetime.now()
+deliveryDate=now.strftime("%Y-%m-%d")
 
-for patternId, pattern in filePatterns:
-  if "fjerritslev-pdf" in patternId:
-    storeFjerritslevPdfValues(pattern)
-  else:
-    print patternId + " pattern not supported yet"
+file = open("unrecognizedfiles", "w")
+
+for line in open("filelist", "r"):
+  stored = False
+  for patternId, pattern in filePatterns:
+    searchResult = re.search(pattern, line)
+    if searchResult != None:
+      if "fjerritslev-pdf" in patternId:
+        storeFjerritslevPdfValues(searchResult.group(0), deliveryDate)
+        stored = True
+        break
+  if not stored:
+    file.write(line)
+
+file.close()
