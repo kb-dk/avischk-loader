@@ -9,6 +9,7 @@ CREATE TABLE newspaperarchive (
 	avisid VARCHAR(255) NOT NULL,
 	shadow_path TEXT NOT NULL,
 	section_title VARCHAR(255), 
+	edition_title VARCHAR(255), 
 	delivery_date DATE NOT NULL
 );
 
