@@ -19,25 +19,20 @@ newspaperName = config.get("loader-config", "newspaper-name")
 newspaperPath = config.get("loader-config", "newspaper-path")
 filePatterns = config.items("file-patterns")
 
-def findMathingFiles(matching):
+def storeFjerritslevPdfValues(pattern):
   now = datetime.datetime.now()
   deliveryDate=now.strftime("%Y-%m-%d")
-
-  for path in glob.glob(newspaperPath + matching):
-    fileFormat,date,singlePage,pageNumber,newspaperId,shadowPath,sectionTitle,editionTitle = fjerritslevPdfValuesFromPath(path)
-    storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, shadowPath, sectionTitle, editionTitle, deliveryDate)
-
-def fjerritslevPdfValuesFromPath(path):
-  paper,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
-  page,fileFormat = pageAndFormat.split(".")
-  pageNumber = page.replace("-","")
-  year = date[0:4]
-  month = date[4:6]
-  day = date[6:8]
-  date = year + "-" + month + "-" + day
-  newspaperId = newspaperName.replace(" ", "_")
-  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  return (fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle)
+  for path in glob.glob(newspaperPath + pattern):
+    paper,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
+    page,fileFormat = pageAndFormat.split(".")
+    pageNumber = page.replace("-","")
+    year = date[0:4]
+    month = date[4:6]
+    day = date[6:8]
+    date = year + "-" + month + "-" + day
+    newspaperId = newspaperName.replace(" ", "_")
+    shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
+    storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
 
 def createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day):
   return newspaperId+"/"+fileFormat+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
@@ -61,5 +56,8 @@ def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number,
 
 
 
-for key, path in filePatterns:
-  findMathingFiles(path)
+for patternId, pattern in filePatterns:
+  if "fjerritslev-pdf" in patternId:
+    storeFjerritslevPdfValues(pattern)
+  else:
+    print patternId + " pattern not supported yet"
