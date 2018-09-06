@@ -10,7 +10,8 @@ CREATE TABLE newspaperarchive (
 	shadow_path TEXT NOT NULL,
 	section_title VARCHAR(255), 
 	edition_title VARCHAR(255), 
-	delivery_date DATE NOT NULL
+	delivery_date DATE NOT NULL,
+	handle BIGSERIAL
 );
 
 CREATE INDEX avisid_date_index ON newspaperarchive(avisid, edition_date);
