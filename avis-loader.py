@@ -31,9 +31,21 @@ def storeFjerritslevPdfValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
   storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
 
+def storeFjerritslevTiffValues(path, deliveryDate):
+  paper,_,_,_ = path.split("/")
+  date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
+  page,fileFormat = pageAndFormat.split(".")
+  pageNumber = page.replace("-","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = newspaperName.replace(" ", "_")
+  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day):
   return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
-
 
 def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, shadow_path, section_title, edition_title, delivery_date):
   sql = """INSERT INTO newspaperarchive VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
@@ -51,22 +63,32 @@ def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number,
     if conn is not None:
       conn.close()
 
+def main():
+  now = datetime.datetime.now()
+  deliveryDate=now.strftime("%Y-%m-%d")
 
-now = datetime.datetime.now()
-deliveryDate=now.strftime("%Y-%m-%d")
+  unrecognized = open("unrecognizedfiles", "w")
 
-file = open("unrecognizedfiles", "w")
+  for line in open("filelist", "r"):
+    if line.endswith(".xml\n") or line.endswith(".log\n") or line.endswith(".txt\n") or line.endswith(".db\n"):
+      continue
 
-for line in open("filelist", "r"):
-  stored = False
-  for patternId, pattern in filePatterns:
-    searchResult = re.search(pattern, line)
-    if searchResult != None:
-      if "fjerritslev-pdf" in patternId:
-        storeFjerritslevPdfValues(searchResult.group(0), deliveryDate)
-        stored = True
-        break
-  if not stored:
-    file.write(line)
+    stored = False
+    for patternId, pattern in filePatterns:
+      searchResult = re.search(pattern, line)
+      if searchResult != None:
+        if "fjerritslev-pdf" in patternId:
+          storeFjerritslevPdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "fjerritslev-tiff" in patternId:
+          storeFjerritslevTiffValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+    if not stored:
+      unrecognized.write(line)
 
-file.close()
+  unrecognized.close()
+
+if __name__ == '__main__':
+    main()
