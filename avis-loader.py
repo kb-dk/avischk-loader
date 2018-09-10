@@ -15,7 +15,6 @@ dbuser = config.get("db-config", "user")
 dbhost = config.get("db-config", "host")
 dbpassword = config.get("db-config", "password")
 
-newspaperName = config.get("loader-config", "newspaper-name")
 newspaperPath = config.get("loader-config", "newspaper-path")
 filePatterns = config.items("file-patterns")
 
@@ -27,9 +26,10 @@ def storeFjerritslevPdfValues(path, deliveryDate):
   month = date[4:6]
   day = date[6:8]
   date = year + "-" + month + "-" + day
-  newspaperId = newspaperName.replace(" ", "_")
+  newspaperId = "fjerritslevavis"
+  newspaperTitle = "Fjerritslev Avis"
   shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
 
 def storeFjerritslevTiffValues(path, deliveryDate):
   paper,_,_,_ = path.split("/")
@@ -40,21 +40,22 @@ def storeFjerritslevTiffValues(path, deliveryDate):
   month = date[4:6]
   day = date[6:8]
   date = year + "-" + month + "-" + day
-  newspaperId = newspaperName.replace(" ", "_")
+  newspaperId = "fjerritslevavis"
+  newspaperTitle = "Fjerritslev Avis"
   shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, shadowPath, "", editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
 
 def createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day):
   return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
 
-def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, shadow_path, section_title, edition_title, delivery_date):
-  sql = """INSERT INTO newspaperarchive VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date):
+  sql = """INSERT INTO newspaperarchive VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
 
   conn = None
   try:
     conn = psycopg2.connect(host=dbhost, database=dbname, user=dbuser, password=dbpassword)
     cursor = conn.cursor()
-    cursor.execute(sql, (orig_relpath, format_type, edition_date, single_page, page_number, avisid, shadow_path, section_title, edition_title, delivery_date))
+    cursor.execute(sql, (orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date))
     conn.commit()
     cursor.close()
   except (Exception) as error:
