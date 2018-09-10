@@ -5,7 +5,7 @@ import os
 import psycopg2
 import datetime
 import re
-
+import sys
 
 config = ConfigParser.RawConfigParser()
 config.read("avis-loader-config.cfg")
@@ -14,8 +14,6 @@ dbname = config.get("db-config", "dbname")
 dbuser = config.get("db-config", "user")
 dbhost = config.get("db-config", "host")
 dbpassword = config.get("db-config", "password")
-
-newspaperPath = config.get("loader-config", "newspaper-path")
 filePatterns = config.items("file-patterns")
 
 def storeFjerritslevPdfValues(path, deliveryDate):
@@ -70,7 +68,7 @@ def main():
 
   unrecognized = open("unrecognizedfiles", "w")
 
-  for line in open("filelist", "r"):
+  for line in open(sys.argv[1], "r"):
     if line.endswith(".xml\n") or line.endswith(".log\n") or line.endswith(".txt\n") or line.endswith(".db\n"):
       continue
 
