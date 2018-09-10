@@ -1,4 +1,5 @@
 #!/usr/bin/env python2.7
+# -*- coding: utf-8 -*-
 
 import ConfigParser
 import os
@@ -8,7 +9,7 @@ import re
 import sys
 
 config = ConfigParser.RawConfigParser()
-config.read("avis-loader-config.cfg")
+config.read("avis-loader-config-test.cfg")
 
 dbname = config.get("db-config", "dbname")
 dbuser = config.get("db-config", "user")
@@ -17,7 +18,7 @@ dbpassword = config.get("db-config", "password")
 filePatterns = config.items("file-patterns")
 
 def storeFjerritslevPdfValues(path, deliveryDate):
-  paper,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
+  _,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
   page,fileFormat = pageAndFormat.split(".")
   pageNumber = page.replace("-","")
   year = date[0:4]
@@ -30,7 +31,6 @@ def storeFjerritslevPdfValues(path, deliveryDate):
   storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
 
 def storeFjerritslevTiffValues(path, deliveryDate):
-  paper,_,_,_ = path.split("/")
   date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
   page,fileFormat = pageAndFormat.split(".")
   pageNumber = page.replace("-","")
@@ -42,6 +42,41 @@ def storeFjerritslevTiffValues(path, deliveryDate):
   newspaperTitle = "Fjerritslev Avis"
   shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
   storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
+
+def storeBorsenValues(path, deliveryDate):
+  date,pageAndFormat = os.path.basename(path).split("_")
+  pageNumber,fileFormat = pageAndFormat.split(".")
+  year,month,day = date.split("-")
+  newspaperId = "boersen"
+  newspaperTitle = "Børsen"
+  editionTitle="Main"
+  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
+
+def storeBorsenBrikValues(path, deliveryDate):
+  _,_,_,year,monthAndDay,_ = path.split("/")
+  if "-" in monthAndDay:
+    month,day=monthAndDay.split("-")
+  else:
+    month=monthAndDay
+    day="01"
+  date=year+"-"+month+"-"+day
+
+  filename = os.path.basename(path)
+  if "_" in filename:
+    _,pageAndFormat = filename.split("_")
+    pageNumber,fileFormat = pageAndFormat.split(".")
+    singlePage=False
+  else:
+    pageNumber = "1"
+    singlePage=True
+    _,fileFormat = filename.split(".")
+
+  newspaperId = "boersen"
+  newspaperTitle = "Børsen"
+  editionTitle="Brik"
+  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
 
 def createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day):
   return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
@@ -84,6 +119,19 @@ def main():
           storeFjerritslevTiffValues(searchResult.group(0), deliveryDate)
           stored = True
           break
+        if "børsen-jp2" in patternId:
+          storeBorsenValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "børsen-pdf" in patternId:
+          storeBorsenValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "børsen-brik-pdf" in patternId:
+          storeBorsenBrikValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+
     if not stored:
       unrecognized.write(line)
 
