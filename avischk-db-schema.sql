@@ -7,6 +7,7 @@ CREATE TABLE newspaperarchive (
 	single_page BOOLEAN NOT NULL,
 	page_number INTEGER,
 	avisid VARCHAR(255) NOT NULL,
+	avistitle VARCHAR(255) NOT NULL,
 	shadow_path TEXT NOT NULL,
 	section_title VARCHAR(255), 
 	edition_title VARCHAR(255), 
