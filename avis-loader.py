@@ -27,8 +27,9 @@ def storeFjerritslevPdfValues(path, deliveryDate):
   date = year + "-" + month + "-" + day
   newspaperId = "fjerritslevavis"
   newspaperTitle = "Fjerritslev Avis"
-  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeFjerritslevTiffValues(path, deliveryDate):
   date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
@@ -40,8 +41,9 @@ def storeFjerritslevTiffValues(path, deliveryDate):
   date = year + "-" + month + "-" + day
   newspaperId = "fjerritslevavis"
   newspaperTitle = "Fjerritslev Avis"
-  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeBorsenValues(path, deliveryDate):
   date,pageAndFormat = os.path.basename(path).split("_")
@@ -50,8 +52,9 @@ def storeBorsenValues(path, deliveryDate):
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
   editionTitle="Main"
-  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeBorsenBrikValues(path, deliveryDate):
   _,_,_,year,monthAndDay,_ = path.split("/")
@@ -62,24 +65,28 @@ def storeBorsenBrikValues(path, deliveryDate):
     day="01"
   date=year+"-"+month+"-"+day
 
-  filename = os.path.basename(path)
+  filenameWithExtension = os.path.basename(path)
+  filename,fileFormat = filenameWithExtension.split(".")
   if "_" in filename:
-    _,pageAndFormat = filename.split("_")
-    pageNumber,fileFormat = pageAndFormat.split(".")
+    editionTitle,pageNumber = filename.split("_")
     singlePage=False
   else:
     pageNumber = "1"
+    editionTitle = filename
     singlePage=True
-    _,fileFormat = filename.split(".")
 
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle="Brik"
-  shadowPath = createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day)
-  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, "", editionTitle, deliveryDate)
+  editionTitle = "Brik-" + editionTitle
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
-def createShadowPath(newspaperId, editionTitle, fileFormat, year, month, day):
-  return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+"_"+year+"_"+month+"_"+day+"."+fileFormat
+def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
+  section = ""
+  if sectionTitle != "":
+    section = "_"+sectionTitle
+  return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+section+"_"+year+"_"+month+"_"+day+"_"+pageNumber+"."+fileFormat
 
 def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date):
   sql = """INSERT INTO newspaperarchive VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
