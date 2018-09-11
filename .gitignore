@@ -1,4 +1,7 @@
-
-# IntelliJ project files
 .idea
 *.iml
+
+test/*
+filelists/*
+unrecognizedfiles*
+avis-loader-config-test.cfg
