@@ -29,7 +29,7 @@ def storeFjerritslevPdfValues(path, deliveryDate):
   newspaperTitle = "Fjerritslev Avis"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeFjerritslevTiffValues(path, deliveryDate):
   date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
@@ -43,7 +43,7 @@ def storeFjerritslevTiffValues(path, deliveryDate):
   newspaperTitle = "Fjerritslev Avis"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeBorsenValues(path, deliveryDate):
   date,pageAndFormat = os.path.basename(path).split("_")
@@ -54,7 +54,7 @@ def storeBorsenValues(path, deliveryDate):
   editionTitle="Main"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, "false", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeBorsenBrikValues(path, deliveryDate):
   _,_,_,year,monthAndDay,_ = path.split("/")
@@ -69,11 +69,11 @@ def storeBorsenBrikValues(path, deliveryDate):
   filename,fileFormat = filenameWithExtension.split(".")
   if "_" in filename:
     editionTitle,pageNumber = filename.split("_")
-    singlePage=False
+    singlePage=True
   else:
     pageNumber = "1"
     editionTitle = filename
-    singlePage=True
+    singlePage=False
 
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
