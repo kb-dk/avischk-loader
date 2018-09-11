@@ -48,6 +48,7 @@ def storeFjerritslevTiffValues(path, deliveryDate):
 def storeBorsenValues(path, deliveryDate):
   date,pageAndFormat = os.path.basename(path).split("_")
   pageNumber,fileFormat = pageAndFormat.split(".")
+  pageNumber = pageNumber.replace("-","")
   year,month,day = date.split("-")
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
@@ -58,6 +59,32 @@ def storeBorsenValues(path, deliveryDate):
 
 def storeBorsenBrikValues(path, deliveryDate):
   _,_,_,year,monthAndDay,_ = path.split("/")
+  if "-" in monthAndDay:
+    month,day=monthAndDay.split("-")
+  else:
+    month=monthAndDay
+    day="01"
+  date=year+"-"+month+"-"+day
+
+  filenameWithExtension = os.path.basename(path)
+  filename,fileFormat = filenameWithExtension.split(".")
+  if "_" in filename:
+    editionTitle,pageNumber = filename.split("_")
+    singlePage=True
+  else:
+    pageNumber = "1"
+    editionTitle = filename
+    singlePage=False
+
+  newspaperId = "boersen"
+  newspaperTitle = "Børsen"
+  editionTitle = "Brik-" + editionTitle
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+def storeBorsenBrikJp2Values(path, deliveryDate):
+  _,_,year,monthAndDay,_,_ = path.split("/")
   if "-" in monthAndDay:
     month,day=monthAndDay.split("-")
   else:
@@ -111,7 +138,7 @@ def main():
   unrecognized = open("unrecognizedfiles", "w")
 
   for line in open(sys.argv[1], "r"):
-    if line.endswith(".xml\n") or line.endswith(".log\n") or line.endswith(".txt\n") or line.endswith(".db\n"):
+    if line.endswith(".xml\n") or line.endswith(".log\n") or line.endswith(".txt\n") or line.endswith(".db\n") or line.endswith(".sh\n"):
       continue
 
     stored = False
@@ -136,6 +163,10 @@ def main():
           break
         if "børsen-brik-pdf" in patternId:
           storeBorsenBrikValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "børsen-brik-jp2" in patternId:
+          storeBorsenBrikJp2Values(searchResult.group(0), deliveryDate)
           stored = True
           break
 
