@@ -57,6 +57,33 @@ def storeBorsenValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+def storeBorsenPdfValues3(path, deliveryDate):
+  year,month,day,pageAndFormat = os.path.basename(path).split("_")
+  date = year + "-" + month + "-" + day
+  pageNumber,fileFormat = pageAndFormat.split(".")
+  pageNumber = pageNumber.replace("-","")
+  newspaperId = "boersen"
+  newspaperTitle = "Børsen"
+  editionTitle="Main"
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+def storeBorsenPdfValues4(path, deliveryDate):
+  dateEtc,fileFormat = os.path.basename(path).split(".")
+  year = dateEtc[0:4]
+  month = dateEtc[4:6]
+  day = dateEtc[6:8]
+  sectionTitle = dateEtc[8:-3]
+  pageNumber = dateEtc[-3:]
+
+  date = year + "-" + month + "-" + day
+  newspaperId = "boersen"
+  newspaperTitle = "Børsen"
+  editionTitle="Main"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def storeBorsenBrikValues(path, deliveryDate):
   _,_,_,year,monthAndDay,_ = path.split("/")
   if "-" in monthAndDay:
@@ -155,6 +182,14 @@ def main():
           break
         if "børsen-jp2" in patternId:
           storeBorsenValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "børsen-pdf3" == patternId:
+          storeBorsenPdfValues3(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "børsen-pdf4" == patternId:
+          storeBorsenPdfValues4(searchResult.group(0), deliveryDate)
           stored = True
           break
         if "børsen-pdf" in patternId:
