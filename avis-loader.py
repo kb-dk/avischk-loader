@@ -97,18 +97,17 @@ def storeBorsenBrikValues(path, deliveryDate):
   filename,fileFormat = filenameWithExtension.split(".")
   if "_" in filename:
     editionTitle,pageNumber = filename.split("_")
-    singlePage=True
   else:
-    pageNumber = "1"
+    pageNumber = "0"
     editionTitle = filename
-    singlePage=False
 
+  singlePage=True
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle = "Brik-" + editionTitle
+  pageLabel = "Brik"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
 
 def storeBorsenBrikJp2Values(path, deliveryDate):
   _,_,year,monthAndDay,_,_ = path.split("/")
@@ -123,18 +122,17 @@ def storeBorsenBrikJp2Values(path, deliveryDate):
   filename,fileFormat = filenameWithExtension.split(".")
   if "_" in filename:
     editionTitle,pageNumber = filename.split("_")
-    singlePage=True
   else:
-    pageNumber = "1"
+    pageNumber = "0"
     editionTitle = filename
-    singlePage=False
 
+  singlePage=True
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle = "Brik-" + editionTitle
+  pageLabel = "Brik"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
 
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
@@ -142,14 +140,14 @@ def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, 
     section = "_"+sectionTitle
   return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+section+"_"+year+"_"+month+"_"+day+"_"+pageNumber+"."+fileFormat
 
-def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date):
-  sql = """INSERT INTO newspaperarchive VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label=""):
+  sql = """INSERT INTO newspaperarchive(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
 
   conn = None
   try:
     conn = psycopg2.connect(host=dbhost, database=dbname, user=dbuser, password=dbpassword)
     cursor = conn.cursor()
-    cursor.execute(sql, (orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date))
+    cursor.execute(sql, (orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label))
     conn.commit()
     cursor.close()
   except (Exception) as error:
