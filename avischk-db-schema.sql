@@ -12,7 +12,8 @@ CREATE TABLE newspaperarchive (
 	section_title VARCHAR(255), 
 	edition_title VARCHAR(255), 
 	delivery_date DATE NOT NULL,
-	handle BIGSERIAL
+	handle BIGSERIAL,
+	side_label VARCHAR(255)
 );
 
 CREATE INDEX avisid_date_index ON newspaperarchive(avisid, edition_date);
