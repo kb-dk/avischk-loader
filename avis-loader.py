@@ -184,6 +184,20 @@ def storeBorsenBrikJp2Values(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
 
+def storeFrederikshavnTiffValues(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  date,_,editionTitle,page = filename.split("_")
+  pageNumber = page.replace("-","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "frederikshavnsavis"
+  newspaperTitle = "Frederikshavns Avis"
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
   if sectionTitle != "":
@@ -266,6 +280,10 @@ def main():
           break
         if "børsen-brik-jp2" in patternId:
           storeBorsenBrikJp2Values(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "frederikshavn-tiff" in patternId:
+          storeFrederikshavnTiffValues(searchResult.group(0), deliveryDate)
           stored = True
           break
 
