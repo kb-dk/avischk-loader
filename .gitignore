@@ -3,5 +3,6 @@
 
 test/*
 filelists/*
+unrecognized/*
 unrecognizedfiles*
 avis-loader-config-test.cfg
