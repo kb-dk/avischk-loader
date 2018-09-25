@@ -13,7 +13,8 @@ CREATE TABLE newspaperarchive (
 	edition_title VARCHAR(255), 
 	delivery_date DATE NOT NULL,
 	handle BIGSERIAL,
-	side_label VARCHAR(255)
+	side_label VARCHAR(255),
+	fraktur BOOLEAN
 );
 
 CREATE INDEX avisid_date_index ON newspaperarchive(avisid, edition_date);
