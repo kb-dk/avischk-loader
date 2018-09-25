@@ -142,6 +142,23 @@ def storeBorsenBagsidePdfValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
 
+def storeBorsenSpecialPdfValues(path, deliveryDate):
+  filenameWithExtension = os.path.basename(path)
+  filename,fileFormat = filenameWithExtension.split(".")
+  year = filename[0:4]
+  month = filename[4:6]
+  day = filename[6:8]
+  sectionTitle = filename[17:]
+  pageNumber = "0"
+
+  date = year + "-" + month + "-" + day
+  singlePage=False
+  newspaperId = "boersen"
+  newspaperTitle = "Børsen"
+  editionTitle = "Main"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def storeBorsenBrikJp2Values(path, deliveryDate):
   _,_,year,monthAndDay,_,_ = path.split("/")
   if "-" in monthAndDay:
@@ -241,6 +258,10 @@ def main():
           break
         if "børsen-bagside-pdf" == patternId:
           storeBorsenBagsidePdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "børsen-special-pdf" == patternId:
+          storeBorsenSpecialPdfValues(searchResult.group(0), deliveryDate)
           stored = True
           break
         if "børsen-brik-jp2" in patternId:
