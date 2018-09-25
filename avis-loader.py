@@ -122,7 +122,7 @@ def storeBorsenBrikValues(path, deliveryDate):
   pageLabel = "Brik"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, side_label=pageLabel)
 
 def storeBorsenBagsidePdfValues(path, deliveryDate):
   filenameWithExtension = os.path.basename(path)
@@ -140,7 +140,7 @@ def storeBorsenBagsidePdfValues(path, deliveryDate):
   pageLabel = "Bagside"
   editionTitle = "Main"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, side_label=pageLabel)
 
 def storeBorsenSpecialPdfValues(path, deliveryDate):
   filenameWithExtension = os.path.basename(path)
@@ -182,9 +182,9 @@ def storeBorsenBrikJp2Values(path, deliveryDate):
   pageLabel = "Brik"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, pageLabel)
+  storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, side_label=pageLabel)
 
-def storeFrederikshavnTiffValues(path, deliveryDate):
+def storeFrederikshavnTiffValues(path, deliveryDate, fraktur="false"):
   filename,fileFormat = os.path.basename(path).split(".")
   date,_,editionTitle,page = filename.split("_")
   pageNumber = page.replace("-","")
@@ -196,7 +196,7 @@ def storeFrederikshavnTiffValues(path, deliveryDate):
   newspaperTitle = "Frederikshavns Avis"
   sectionTitle = ""
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
-  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, fraktur=fraktur)
 
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
@@ -204,14 +204,14 @@ def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, 
     section = "_"+sectionTitle
   return newspaperId+"/"+year+"/"+month+"/"+day+"/" + newspaperId+"_"+editionTitle+section+"_"+year+"_"+month+"_"+day+"_"+pageNumber+"."+fileFormat
 
-def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label=""):
-  sql = """INSERT INTO newspaperarchive(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label="", fraktur="false"):
+  sql = """INSERT INTO newspaperarchive(orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label, fraktur) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
 
   conn = None
   try:
     conn = psycopg2.connect(host=dbhost, database=dbname, user=dbuser, password=dbpassword)
     cursor = conn.cursor()
-    cursor.execute(sql, (orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label))
+    cursor.execute(sql, (orig_relpath, format_type, edition_date, single_page, page_number, avisid, avistitle, shadow_path, section_title, edition_title, delivery_date, side_label, fraktur))
     conn.commit()
     cursor.close()
   except (Exception) as error:
@@ -284,6 +284,10 @@ def main():
           break
         if "frederikshavn-tiff" in patternId:
           storeFrederikshavnTiffValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "frederikshavn-fraktur-tiff" in patternId:
+          storeFrederikshavnTiffValues(searchResult.group(0), deliveryDate, "true")
           stored = True
           break
 
