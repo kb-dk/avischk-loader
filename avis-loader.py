@@ -198,6 +198,22 @@ def storeFrederikshavnTiffValues(path, deliveryDate, fraktur="false"):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, fraktur=fraktur)
 
+def storeFrederikshavnPdfValues(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  _,date,_,editionTitle,page = filename.split("_")
+  page = page.replace("-","")
+  page = page.replace("M","")
+  pageNumber = page.replace("T","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "frederikshavnsavis"
+  newspaperTitle = "Frederikshavns Avis"
+  sectionTitle = ""
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
   if sectionTitle != "":
@@ -288,6 +304,10 @@ def main():
           break
         if "frederikshavn-fraktur-tiff" in patternId:
           storeFrederikshavnTiffValues(searchResult.group(0), deliveryDate, "true")
+          stored = True
+          break
+        if "frederikshavn-pdf" in patternId:
+          storeFrederikshavnPdfValues(searchResult.group(0), deliveryDate)
           stored = True
           break
 
