@@ -214,6 +214,21 @@ def storeFrederikshavnPdfValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+def storeKristeligtDagbladPdfValues(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  _,date,editionTitle,sectionTitle,page = filename.split("_")
+  page = page.replace("M","")
+  page = page.replace("T","")
+  pageNumber = page.replace("E","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "kristeligtdagblad"
+  newspaperTitle = "Kristeligt Dagblad"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
   if sectionTitle != "":
@@ -308,6 +323,10 @@ def main():
           break
         if "frederikshavn-pdf" in patternId:
           storeFrederikshavnPdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "kristeligtdagblad-pdf" in patternId:
+          storeKristeligtDagbladPdfValues(searchResult.group(0), deliveryDate)
           stored = True
           break
 
