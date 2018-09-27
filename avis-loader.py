@@ -275,6 +275,82 @@ def storeLogstorPdfValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+def storeFlensborgJp2Values(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  _,date,sectionNumberEtc,sectionTitle,page = filename.split("_")
+  sectionNumber = sectionNumberEtc[0:1]
+  sectionTitle = sectionTitle + sectionNumber
+  pageNumber = page.replace("-","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "flensborgavis"
+  newspaperTitle = "Flensborg Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+def storeFlensborgJp2Values2(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  date,sectionNumberEtc,sectionTitle,page = filename.split("_")
+  sectionNumber = sectionNumberEtc[0:1]
+  sectionTitle = sectionTitle + sectionNumber
+  pageNumber = page.replace("-","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "flensborgavis"
+  newspaperTitle = "Flensborg Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+def storeFlensborgJp2Values4(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  _,date,_,sectionAndpage = filename.split("_")
+  sectionTitle = sectionAndpage[0:1]
+  pageNumber = sectionAndpage[1:]
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "flensborgavis"
+  newspaperTitle = "Flensborg Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+def storeFlensborgPdfValues(path, deliveryDate):
+  filename = os.path.basename(path)[0:-4]
+  fileFormat = os.path.basename(path)[-3:]
+  _,date,sectionTitle,_,pageNumber = filename.split("_")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "flensborgavis"
+  newspaperTitle = "Flensborg Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+def storeFlensborgPdfValues2(path, deliveryDate):
+  filename = os.path.basename(path)[0:-4]
+  fileFormat = os.path.basename(path)[-3:]
+  _,date,sectionTitle,sectionNumber,pageNumber = filename.split("_")
+  sectionTitle = sectionTitle + sectionNumber
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "flensborgavis"
+  newspaperTitle = "Flensborg Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
   if sectionTitle != "":
@@ -396,6 +472,26 @@ def main():
           break
         if "loegstoeravis-pdf" in patternId:
           storeLogstorPdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "flensborgavis-jp2-2" == patternId:
+          storeFlensborgJp2Values2(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "flensborgavis-jp2-4" == patternId:
+          storeFlensborgJp2Values4(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "flensborgavis-jp2" in patternId:
+          storeFlensborgJp2Values(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "flensborgavis-pdf2" == patternId:
+          storeFlensborgPdfValues2(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "flensborgavis-pdf" in patternId:
+          storeFlensborgPdfValues(searchResult.group(0), deliveryDate)
           stored = True
           break
 
