@@ -351,6 +351,19 @@ def storeFlensborgPdfValues2(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+def storeSudschleswigscheJp2Values(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  _,date,_,sectionTitle,pageNumber = filename.split("_")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "suedschleswigscheheimatzeitung"
+  newspaperTitle = "Südschleswigsche Heimat-Zeitung"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
   if sectionTitle != "":
@@ -492,6 +505,10 @@ def main():
           break
         if "flensborgavis-pdf" in patternId:
           storeFlensborgPdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "sudschleswigsche-jp2" in patternId:
+          storeSudschleswigscheJp2Values(searchResult.group(0), deliveryDate)
           stored = True
           break
 
