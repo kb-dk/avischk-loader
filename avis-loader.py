@@ -18,7 +18,7 @@ dbpassword = config.get("db-config", "password")
 filePatterns = config.items("file-patterns")
 
 def storeFjerritslevPdfValues(path, deliveryDate):
-  _,date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
+  _,date,_,sectionTitle,pageAndFormat = os.path.basename(path).split("_")
   page,fileFormat = pageAndFormat.split(".")
   pageNumber = page.replace("-","")
   year = date[0:4]
@@ -27,12 +27,12 @@ def storeFjerritslevPdfValues(path, deliveryDate):
   date = year + "-" + month + "-" + day
   newspaperId = "fjerritslevavis"
   newspaperTitle = "Fjerritslev Avis"
-  sectionTitle = ""
+  editionTitle = "0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
 def storeFjerritslevTiffValues(path, deliveryDate):
-  date,_,editionTitle,pageAndFormat = os.path.basename(path).split("_")
+  date,_,sectionTitle,pageAndFormat = os.path.basename(path).split("_")
   page,fileFormat = pageAndFormat.split(".")
   pageNumber = page.replace("-","")
   year = date[0:4]
@@ -41,7 +41,7 @@ def storeFjerritslevTiffValues(path, deliveryDate):
   date = year + "-" + month + "-" + day
   newspaperId = "fjerritslevavis"
   newspaperTitle = "Fjerritslev Avis"
-  sectionTitle = ""
+  editionTitle = "0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -52,8 +52,8 @@ def storeBorsenValues(path, deliveryDate):
   year,month,day = date.split("-")
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle="Main"
-  sectionTitle = ""
+  editionTitle="0"
+  sectionTitle = "Main"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -64,8 +64,8 @@ def storeBorsenPdfValues3(path, deliveryDate):
   pageNumber = pageNumber.replace("-","")
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle="Main"
-  sectionTitle = ""
+  editionTitle="0"
+  sectionTitle = "Main"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -80,7 +80,7 @@ def storeBorsenPdfValues4(path, deliveryDate):
   date = year + "-" + month + "-" + day
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle="Main"
+  editionTitle="0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -138,7 +138,7 @@ def storeBorsenBagsidePdfValues(path, deliveryDate):
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
   pageLabel = "Bagside"
-  editionTitle = "Main"
+  editionTitle = "0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, side_label=pageLabel)
 
@@ -155,7 +155,7 @@ def storeBorsenSpecialPdfValues(path, deliveryDate):
   singlePage=False
   newspaperId = "boersen"
   newspaperTitle = "Børsen"
-  editionTitle = "Main"
+  editionTitle = "0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, singlePage, pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -186,7 +186,7 @@ def storeBorsenBrikJp2Values(path, deliveryDate):
 
 def storeFrederikshavnTiffValues(path, deliveryDate, fraktur="false"):
   filename,fileFormat = os.path.basename(path).split(".")
-  date,_,editionTitle,page = filename.split("_")
+  date,_,sectionTitle,page = filename.split("_")
   pageNumber = page.replace("-","")
   year = date[0:4]
   month = date[4:6]
@@ -194,13 +194,13 @@ def storeFrederikshavnTiffValues(path, deliveryDate, fraktur="false"):
   date = year + "-" + month + "-" + day
   newspaperId = "frederikshavnsavis"
   newspaperTitle = "Frederikshavns Avis"
-  sectionTitle = ""
+  editionTitle = "0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, fraktur=fraktur)
 
 def storeFrederikshavnPdfValues(path, deliveryDate):
   filename,fileFormat = os.path.basename(path).split(".")
-  _,date,_,editionTitle,page = filename.split("_")
+  _,date,_,sectionTitle,page = filename.split("_")
   page = page.replace("-","")
   page = page.replace("M","")
   pageNumber = page.replace("T","")
@@ -210,7 +210,7 @@ def storeFrederikshavnPdfValues(path, deliveryDate):
   date = year + "-" + month + "-" + day
   newspaperId = "frederikshavnsavis"
   newspaperTitle = "Frederikshavns Avis"
-  sectionTitle = ""
+  editionTitle = "0"
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
