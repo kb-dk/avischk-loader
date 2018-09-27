@@ -270,7 +270,10 @@ def main():
   now = datetime.datetime.now()
   deliveryDate=now.strftime("%Y-%m-%d")
 
-  unrecognized = open("unrecognizedfiles", "w")
+  if len(sys.argv) > 2:
+    unrecognized = open(sys.argv[2], "w")
+  else:
+    unrecognized = open("unrecognizedfiles", "w")
 
   for line in open(sys.argv[1], "r"):
     if line.endswith(".xml\n") or line.endswith(".log\n") or line.endswith(".txt\n") or line.endswith(".db\n") or line.endswith(".sh\n"):
