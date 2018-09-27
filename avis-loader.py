@@ -282,6 +282,7 @@ def main():
       print "No file found at " + fullPath
       continue
     deliveryDate = datetime.datetime.fromtimestamp(os.path.getmtime(fullPath)).date()
+    # deliveryDate = "2000-01-01"
 
     stored = False
     for patternId, pattern in filePatterns:
@@ -357,7 +358,7 @@ def main():
           break
 
     if not stored:
-      unrecognized.write(line)
+      unrecognized.write(line + "\n")
 
   unrecognized.close()
 
