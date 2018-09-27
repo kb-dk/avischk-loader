@@ -245,6 +245,36 @@ def storeKristeligtDagbladTiffValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+def storeLogstorTiffValues(path, deliveryDate, fraktur="false"):
+  filename,fileFormat = os.path.basename(path).split(".")
+  date,_,sectionTitle,page = filename.split("_")
+  pageNumber = page.replace("-","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "loegstoeravis1882"
+  newspaperTitle = "Løgstør Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, fraktur=fraktur)
+
+def storeLogstorPdfValues(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  _,date,_,sectionTitle,page = filename.split("_")
+  page = page.replace("-","")
+  page = page.replace("M","")
+  pageNumber = page.replace("T","")
+  year = date[0:4]
+  month = date[4:6]
+  day = date[6:8]
+  date = year + "-" + month + "-" + day
+  newspaperId = "loegstoeravis1882"
+  newspaperTitle = "Løgstør Avis"
+  editionTitle = "0"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 def createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber):
   section = ""
   if sectionTitle != "":
@@ -354,6 +384,18 @@ def main():
           break
         if "kristeligtdagblad-tiff" in patternId:
           storeKristeligtDagbladTiffValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "loegstoeravis-tiff" in patternId:
+          storeFrederikshavnTiffValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "loegstoeravis-fraktur-tiff" in patternId:
+          storeLogstorTiffValues(searchResult.group(0), deliveryDate, "true")
+          stored = True
+          break
+        if "loegstoeravis-pdf" in patternId:
+          storeLogstorPdfValues(searchResult.group(0), deliveryDate)
           stored = True
           break
 
