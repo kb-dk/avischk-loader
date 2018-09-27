@@ -11,6 +11,7 @@ import sys
 config = ConfigParser.RawConfigParser()
 config.read("avis-loader-config-test.cfg")
 
+newspaperLocation = config.get("loader-config", "newspaperLocation")
 dbname = config.get("db-config", "dbname")
 dbuser = config.get("db-config", "user")
 dbhost = config.get("db-config", "host")
@@ -267,17 +268,20 @@ def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number,
       conn.close()
 
 def main():
-  now = datetime.datetime.now()
-  deliveryDate=now.strftime("%Y-%m-%d")
-
   if len(sys.argv) > 2:
     unrecognized = open(sys.argv[2], "w")
   else:
     unrecognized = open("unrecognizedfiles", "w")
 
   for line in open(sys.argv[1], "r"):
-    if line.endswith(".xml\n") or line.endswith(".log\n") or line.endswith(".txt\n") or line.endswith(".db\n") or line.endswith(".sh\n"):
+    line = line.replace("\n", "")
+    if line.endswith(".xml") or line.endswith(".log") or line.endswith(".txt") or line.endswith(".db") or line.endswith(".sh"):
       continue
+    fullPath = newspaperLocation + "/" + line
+    if not os.path.isfile(fullPath):
+      print "No file found at " + fullPath
+      continue
+    deliveryDate = datetime.datetime.fromtimestamp(os.path.getmtime(fullPath)).date()
 
     stored = False
     for patternId, pattern in filePatterns:
