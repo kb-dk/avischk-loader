@@ -717,11 +717,11 @@ def main():
           storePolitikenHnasPdfValues3(searchResult.group(0), deliveryDate)
           stored = True
           break
-        if "politiken-hnas-SEKTION-pdf" in patternId:
+        if "politiken-hnas-sektion-pdf" in patternId:
           storePolitikenHnasPdfValuesSEKTION(searchResult.group(0), deliveryDate)
           stored = True
           break
-        if "politiken-hnas-UDGAVE-pdf" in patternId:
+        if "politiken-hnas-udgave-pdf" in patternId:
           storePolitikenHnasPdfValuesUDGAVE(searchResult.group(0), deliveryDate)
           stored = True
           break
