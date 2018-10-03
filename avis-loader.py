@@ -442,6 +442,69 @@ def storePolitikenHnasPdfValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+# avis-pol/pol_hnas/2013/04/07/POL20130407L14019..pdf
+def storePolitikenHnasPdfValues3(path, deliveryDate):
+  fileFormat = os.path.basename(path)[-3:]
+  filename = os.path.basename(path)[:-5]
+  year = filename[3:7]
+  month = filename[7:9]
+  day = filename[9:11]
+  date = year + "-" + month + "-" + day
+  sectionTitle = "unknown"
+  pageNumber = filename[-3:]
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  editionTitle = filename[12:13]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/pol_hnas/2006/02/19/5_SEKTION/17.pdf
+def storePolitikenHnasPdfValuesSEKTION(path, deliveryDate):
+  vest = "/VEST" in path
+  augmentedPath = path.replace("/VEST", "")
+  _,_,year,month,day,sectionTitle,file = augmentedPath.split("/")
+  sectionTitle = sectionTitle[:1]
+  pageNumber,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  editionTitle = "1"
+  if vest:
+    editionTitle = editionTitle + "(VEST)"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/pol_hnas/2006/02/09/VEST/2_UDGAVE/3_SEKTION/4.pdf
+def storePolitikenHnasPdfValuesUDGAVE(path, deliveryDate):
+  vest = "/VEST" in path
+  augmentedPath = path.replace("/VEST", "")
+  _,_,year,month,day,editionTitle,sectionTitle,file = augmentedPath.split("/")
+  sectionTitle = sectionTitle[:1]
+  pageNumber,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  editionTitle = editionTitle[:1]
+  if vest:
+    editionTitle = editionTitle + "(VEST)"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/pol_hnas/2009/05/22/POL20090522V13#0005.pdf
+def storePolitikenHnasPdfValuesSquare(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  year = filename[3:7]
+  month = filename[7:9]
+  day = filename[9:11]
+  date = year + "-" + month + "-" + day
+  sectionTitle = filename[13:14]
+  pageNumber = filename[-3:]
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  editionTitle = filename[12:13]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 # avis-pol/pol_ocr01/p1892.07.15/p1892.07.15_0002.pdf
 def storePolitikenOcrPdfValues(path, deliveryDate):
   filename = os.path.basename(path)[:-4]
@@ -648,6 +711,22 @@ def main():
           break
         if "politiken-ocr-pdf" in patternId:
           storePolitikenOcrPdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "politiken-hnas-pdf3" == patternId:
+          storePolitikenHnasPdfValues3(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "politiken-hnas-SEKTION-pdf" in patternId:
+          storePolitikenHnasPdfValuesSEKTION(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "politiken-hnas-UDGAVE-pdf" in patternId:
+          storePolitikenHnasPdfValuesUDGAVE(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "politiken-hnas-#-pdf" in patternId:
+          storePolitikenHnasPdfValuesSquare(searchResult.group(0), deliveryDate)
           stored = True
           break
         if "politiken-hnas-pdf" in patternId:
