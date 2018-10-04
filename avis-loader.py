@@ -380,6 +380,55 @@ def storeEkstrabladetHnasPdfValues(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+# avis-pol/eb_hnas/2014/11/27/EKS20141127L12017..pdf
+def storeEkstrabladetHnasPdfValues3(path, deliveryDate):
+  fileFormat = os.path.basename(path)[-3:]
+  filename = os.path.basename(path)[:-5]
+  year = filename[3:7]
+  month = filename[7:9]
+  day = filename[9:11]
+  date = year + "-" + month + "-" + day
+  sectionTitle = "unknown"
+  pageNumber = filename[-3:]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = filename[12:13]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_hnas/2006/02/19/1_SEKTION/45.pdf
+def storeEkstrabladetHnasPdfValuesSEKTION(path, deliveryDate):
+  vest = "/VEST" in path or "/Vest" in path
+  augmentedPath = path.replace("/VEST", "")
+  augmentedPath = augmentedPath.replace("/Vest", "")
+  _,_,year,month,day,sectionTitle,file = augmentedPath.split("/")
+  sectionTitle = sectionTitle[:1]
+  pageNumber,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = "1"
+  if vest:
+    editionTitle = editionTitle + "(VEST)"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_hnas/2006/02/02/9_UDGAVE/1_SEKTION/2.pdf
+def storeEkstrabladetHnasPdfValuesUDGAVE(path, deliveryDate):
+  vest = "/VEST" in path
+  augmentedPath = path.replace("/VEST", "")
+  _,_,year,month,day,editionTitle,sectionTitle,file = augmentedPath.split("/")
+  sectionTitle = sectionTitle[:1]
+  pageNumber,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = editionTitle[:1]
+  if vest:
+    editionTitle = editionTitle + "(VEST)"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 # avis-pol/eb_ocr01/e1932.08.31/e1932.08.31_0003.pdf
 def storeEkstrabladetOcrPdfValues(path, deliveryDate):
   filename = os.path.basename(path)[:-4]
@@ -649,7 +698,7 @@ def main():
 
   for line in open(sys.argv[2], "r"):
     line = line.replace("\n", "")
-    if line.endswith(".xml") or line.endswith(".log") or line.endswith(".txt") or line.endswith(".db") or line.endswith(".sh"):
+    if line.endswith(".xml") or line.endswith(".log") or line.endswith(".txt") or line.endswith(".db") or line.endswith(".sh") or line.endswith(".DS_Store"):
       continue
     fullPath = newspaperLocation + "/" + line
     if not os.path.isfile(fullPath):
@@ -810,8 +859,20 @@ def main():
           storePolitikenEfterlevJpgValues(searchResult.group(0), deliveryDate)
           stored = True
           break
+        if "ekstrabladet-hnas-pdf3" == patternId:
+          storeEkstrabladetHnasPdfValues3(searchResult.group(0), deliveryDate)
+          stored = True
+          break
         if "ekstrabladet-hnas-pdf" in patternId:
           storeEkstrabladetHnasPdfValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-hnas-sektion-pdf" in patternId:
+          storeEkstrabladetHnasPdfValuesSEKTION(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-hnas-udgave-pdf" in patternId:
+          storeEkstrabladetHnasPdfValuesUDGAVE(searchResult.group(0), deliveryDate)
           stored = True
           break
         if "ekstrabladet-ocr-pdf2" == patternId:
