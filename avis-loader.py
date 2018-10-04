@@ -16,7 +16,8 @@ dbname = config.get("db-config", "dbname")
 dbuser = config.get("db-config", "user")
 dbhost = config.get("db-config", "host")
 dbpassword = config.get("db-config", "password")
-filePatterns = config.items("file-patterns")
+
+filePatterns = config.items(sys.argv[1])
 
 def storeFjerritslevPdfValues(path, deliveryDate):
   _,date,_,sectionTitle,pageAndFormat = os.path.basename(path).split("_")
@@ -641,12 +642,12 @@ def storeInDB(orig_relpath, format_type, edition_date, single_page, page_number,
       conn.close()
 
 def main():
-  if len(sys.argv) > 2:
-    unrecognized = open(sys.argv[2], "w")
+  if len(sys.argv) > 3:
+    unrecognized = open(sys.argv[3], "w")
   else:
     unrecognized = open("unrecognizedfiles", "w")
 
-  for line in open(sys.argv[1], "r"):
+  for line in open(sys.argv[2], "r"):
     line = line.replace("\n", "")
     if line.endswith(".xml") or line.endswith(".log") or line.endswith(".txt") or line.endswith(".db") or line.endswith(".sh"):
       continue
