@@ -9,7 +9,7 @@ import re
 import sys
 
 config = ConfigParser.RawConfigParser()
-config.read("avis-loader-config-test.cfg")
+config.read("avis-loader-config.cfg")
 
 newspaperLocation = config.get("loader-config", "newspaperLocation")
 dbname = config.get("db-config", "dbname")
