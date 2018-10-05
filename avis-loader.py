@@ -401,6 +401,7 @@ def storeEkstrabladetHnasPdfValuesSEKTION(path, deliveryDate):
   vest = "/VEST" in path or "/Vest" in path
   augmentedPath = path.replace("/VEST", "")
   augmentedPath = augmentedPath.replace("/Vest", "")
+  augmentedPath = augmentedPath.replace("..", ".")
   _,_,year,month,day,sectionTitle,file = augmentedPath.split("/")
   sectionTitle = sectionTitle[:1]
   pageNumber,fileFormat = file.split(".")
@@ -484,9 +485,38 @@ def storeEkstrabladetHnasPdfValuesDashes(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+# avis-pol/eb_hnas/2006/07/04/01_036_1. Sektion_normalside_200607040420.pdf
+def storeEkstrabladetHnasPdfValuesNormalside(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  filename = file[:-4]
+  fileFormat = "pdf"
+  date = year + "-" + month + "-" + day
+  sectionTitle = "A"
+  pageNumber = filename[3:6]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = "1"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_hnas/2006/07/04/03_008__normalside_200607040420.pdf
+def storeEkstrabladetHnasPdfValuesNormalside2(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  filename = file[:-4]
+  fileFormat = "pdf"
+  date = year + "-" + month + "-" + day
+  sectionTitle = filename[1:2]
+  pageNumber = filename[3:6]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = "1"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 # avis-pol/eb_ocr01/e1932.08.31/e1932.08.31_0003.pdf
 def storeEkstrabladetOcrPdfValues(path, deliveryDate):
   filename = os.path.basename(path)[:-4]
+  filename = filename.replace("q", "")
   fileFormat = os.path.basename(path)[-3:]
   year = filename[1:5]
   month = filename[6:8]
@@ -513,6 +543,22 @@ def storeEkstrabladetOcrPdfValues2(path, deliveryDate):
   newspaperId = "ekstrabladet"
   newspaperTitle = "Ekstra Bladet"
   editionTitle = filename[12:13]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_ocr01/e1917.08.30/e1917.08.30--a_0003.pdf
+def storeEkstrabladetOcrPdfValues6(path, deliveryDate):
+  filename = os.path.basename(path)[:-4]
+  fileFormat = os.path.basename(path)[-3:]
+  year = filename[1:5]
+  month = filename[6:8]
+  day = filename[9:11]
+  date = year + "-" + month + "-" + day
+  sectionTitle = "A"
+  pageNumber = filename[-3:]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = filename[13:14]
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -601,6 +647,7 @@ def storePolitikenHnasPdfValuesSEKTION(path, deliveryDate):
   _,_,year,month,day,sectionTitle,file = augmentedPath.split("/")
   sectionTitle = sectionTitle[:1]
   pageNumber,fileFormat = file.split(".")
+  fileFormat = "pdf"
   date = year + "-" + month + "-" + day
   newspaperId = "politiken"
   newspaperTitle = "Politiken"
@@ -671,6 +718,45 @@ def storePolitikenHnasPdfValuesRandom(path, deliveryDate):
   newspaperId = "politiken"
   newspaperTitle = "Politiken"
   editionTitle = "1"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/pol_hnas/2004/02/20/salaam/7.pdf
+def storePolitikenHnasPdfAndJpgValuesSalaam(path, deliveryDate):
+  _,_,year,month,day,editionTitle,file = path.split("/")
+  pageNumber,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  sectionTitle = "A"
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/pol_hnas/2008/08/11/11_08_2008-TV.pdf
+def storePolitikenHnasPdfAndJpgValuesTitle(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  filename,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  pageNumber = "0"
+  pageLabel = filename[11:]
+  editionTitle = "1"
+  sectionTitle = "unknown"
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate, side_label=pageLabel)
+
+# avis-pol/pol_hnas/2005/06/27/-POL-1L-0270605-BA014Q--.PDF
+def storePolitikenHnasPdfValuesDashes(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  filename,fileFormat = file.split(".")
+  fileFormat = "pdf"
+  date = year + "-" + month + "-" + day
+  sectionTitle = filename[-7:-6]
+  pageNumber = filename[-6:-3]
+  newspaperId = "politiken"
+  newspaperTitle = "Politiken"
+  editionTitle = filename[5:6]
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
@@ -921,6 +1007,18 @@ def main():
           storePolitikenHnasPdfValuesRandom(searchResult.group(0), deliveryDate)
           stored = True
           break
+        if "politiken-hnas-salaam-pdf" in patternId:
+          storePolitikenHnasPdfAndJpgValuesSalaam(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "politiken-hnas-title-pdf" in patternId:
+          storePolitikenHnasPdfAndJpgValuesTitle(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "politiken-hnas-dashes-pdf" in patternId:
+          storePolitikenHnasPdfValuesDashes(searchResult.group(0), deliveryDate)
+          stored = True
+          break
         if "politiken-hnas-pdf" in patternId:
           storePolitikenHnasPdfValues(searchResult.group(0), deliveryDate)
           stored = True
@@ -961,8 +1059,20 @@ def main():
           storeEkstrabladetHnasPdfValuesDashes(searchResult.group(0), deliveryDate)
           stored = True
           break
+        if "ekstrabladet-hnas-normalside-pdf2" == patternId:
+          storeEkstrabladetHnasPdfValuesNormalside2(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-hnas-normalside-pdf" in patternId:
+          storeEkstrabladetHnasPdfValuesNormalside(searchResult.group(0), deliveryDate)
+          stored = True
+          break
         if "ekstrabladet-ocr-pdf2" == patternId:
           storeEkstrabladetOcrPdfValues2(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-ocr-pdf6" == patternId:
+          storeEkstrabladetOcrPdfValues6(searchResult.group(0), deliveryDate)
           stored = True
           break
         if "ekstrabladet-ocr-pdf" in patternId:
