@@ -18,6 +18,8 @@ CREATE TABLE newspaperarchive (
 );
 
 CREATE INDEX avisid_date_index ON newspaperarchive(avisid, edition_date);
+CREATE INDEX avisid_date_index ON newspaperarchive(avisid, format_type);
+
 
 CREATE TABLE characterisation_info (
 	orig_relpath TEXT NOT NULL,
@@ -25,7 +27,9 @@ CREATE TABLE characterisation_info (
 	characterisation_date date,
 	tool_output TEXT,
 	status VARCHAR(100),
-
+	validation_output TEXT,
+		
 	FOREIGN KEY (orig_relpath) REFERENCES newspaperarchive(orig_relpath)
 );
 
+CREATE INDEX title_format_index ON characterisation_info(orig_relpath, tool);
