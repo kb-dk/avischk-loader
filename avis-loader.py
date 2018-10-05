@@ -429,6 +429,61 @@ def storeEkstrabladetHnasPdfValuesUDGAVE(path, deliveryDate):
   shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
   storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
 
+# avis-pol/eb_hnas/2009/02/19/EKS20090219L24#0014.pdf
+def storeEkstrabladetHnasPdfValuesSquare(path, deliveryDate):
+  filename,fileFormat = os.path.basename(path).split(".")
+  year = filename[3:7]
+  month = filename[7:9]
+  day = filename[9:11]
+  date = year + "-" + month + "-" + day
+  sectionTitle = filename[13:14]
+  pageNumber = filename[-3:]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = filename[12:13]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_hnas/2009/08/15/95.jpg
+# avis-pol/eb_hnas/2009/08/15/95.pdf
+def storeEkstrabladetHnasPdfAndJpgValuesSimple(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  pageNumber,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  sectionTitle = "A"
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = "1"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_hnas/2011/10/30/EKTENDAT301011L11B012.pdf
+def storeEkstrabladetHnasPdfValuesEktend(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  filename,fileFormat = file.split(".")
+  date = year + "-" + month + "-" + day
+  sectionTitle = filename[-4:-3]
+  pageNumber = filename[-3:]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = filename[-6:-5]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/eb_hnas/2010/08/29/-EKT-2L-0290810-TB018Q--.PDF
+def storeEkstrabladetHnasPdfValuesDashes(path, deliveryDate):
+  _,_,year,month,day,file = path.split("/")
+  filename,fileFormat = file.split(".")
+  fileFormat = "pdf"
+  date = year + "-" + month + "-" + day
+  sectionTitle = filename[-7:-6]
+  pageNumber = filename[-6:-3]
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = filename[5:6]
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
 # avis-pol/eb_ocr01/e1932.08.31/e1932.08.31_0003.pdf
 def storeEkstrabladetOcrPdfValues(path, deliveryDate):
   filename = os.path.basename(path)[:-4]
@@ -482,6 +537,21 @@ def storeEkstrabladetEfterlevJpgValues(path, deliveryDate):
   _,_,date,file = path.split("/")
   pageNumber,fileFormat = file.split(".")
   fileFormat = "jpg"
+  year, month, day = date.split(".")
+  year = year[1:]
+  date = year + "-" + month + "-" + day
+  sectionTitle = "A"
+  newspaperId = "ekstrabladet"
+  newspaperTitle = "Ekstra Bladet"
+  editionTitle = "1"
+  shadowPath = createShadowPath(newspaperId, editionTitle, sectionTitle, fileFormat, year, month, day, pageNumber)
+  storeInDB(path, fileFormat, date, "true", pageNumber, newspaperId, newspaperTitle, shadowPath, sectionTitle, editionTitle, deliveryDate)
+
+# avis-pol/efterlev_141116_1/e2003.04.25/e2003.04.25_0048.pdf
+def storeEkstrabladetEfterlevPdfValues(path, deliveryDate):
+  _,_,date,file = path.split("/")
+  fileFormat = "pdf"
+  pageNumber = file[-7:-4]
   year, month, day = date.split(".")
   year = year[1:]
   date = year + "-" + month + "-" + day
@@ -875,6 +945,22 @@ def main():
           storeEkstrabladetHnasPdfValuesUDGAVE(searchResult.group(0), deliveryDate)
           stored = True
           break
+        if "ekstrabladet-hnas-#-pdf" in patternId:
+          storeEkstrabladetHnasPdfValuesSquare(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-hnas-simple" in patternId:
+          storeEkstrabladetHnasPdfAndJpgValuesSimple(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-hnas-ektend-pdf" in patternId:
+          storeEkstrabladetHnasPdfValuesEktend(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-hnas-dashes-pdf" in patternId:
+          storeEkstrabladetHnasPdfValuesDashes(searchResult.group(0), deliveryDate)
+          stored = True
+          break
         if "ekstrabladet-ocr-pdf2" == patternId:
           storeEkstrabladetOcrPdfValues2(searchResult.group(0), deliveryDate)
           stored = True
@@ -889,6 +975,10 @@ def main():
           break
         if "ekstrabladet-efterlev-jpg" in patternId:
           storeEkstrabladetEfterlevJpgValues(searchResult.group(0), deliveryDate)
+          stored = True
+          break
+        if "ekstrabladet-efterlev-pdf" in patternId:
+          storeEkstrabladetEfterlevPdfValues(searchResult.group(0), deliveryDate)
           stored = True
           break
 
