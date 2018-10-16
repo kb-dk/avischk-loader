@@ -936,7 +936,7 @@ def main():
           stored = True
           break
         if "loegstoeravis-tiff" in patternId:
-          storeFrederikshavnTiffValues(searchResult.group(0), deliveryDate)
+          storeLogstorTiffValues(searchResult.group(0), deliveryDate)
           stored = True
           break
         if "loegstoeravis-fraktur-tiff" in patternId:
